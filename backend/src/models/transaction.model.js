@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const productSchema = mongoose.Schema({
+const transactionSchema = mongoose.Schema({
   id: {
     type: Number,
     required: true,
@@ -8,14 +8,17 @@ const productSchema = mongoose.Schema({
   title: {
     type: String,
     required: true,
+    index: true,
   },
   price: {
     type: Number,
     required: true,
+    index: true,
   },
   description: {
     type: String,
     required: true,
+    index: true,
   },
   category: {
     type: String,
@@ -35,4 +38,4 @@ const productSchema = mongoose.Schema({
   },
 });
 
-export const Product = mongoose.model("Product", productSchema);
+export const Transaction = mongoose.model("Transaction", transactionSchema);
