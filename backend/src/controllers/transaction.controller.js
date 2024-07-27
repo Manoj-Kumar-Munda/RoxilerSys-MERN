@@ -159,9 +159,43 @@ const getBarChartData = async (req, res, next) => {
     ]);
     console.log("data: ", data);
 
-    return res.status(200).json(new ApiResponse(200, data, "data fetched successfully"));
+    return res
+      .status(200)
+      .json(new ApiResponse(200, data, "data fetched successfully"));
   } catch (error) {
     next(error);
   }
 };
-export { initDb, getTransactions, getStats, getBarChartData };
+
+const getPieChartData = async (req, res, next) => {
+  const month = req.query?.month;
+  try {
+    if (!month) {
+      throw new ApiError(400, "Month is required");
+    }
+    const data = await Transaction.aggregate([
+      {
+        $match: {
+          $expr: {
+            $eq: [{ $month: "$dateOfSale" }, 7],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$category",
+          count: {
+            $sum: 1,
+          },
+        },
+      },
+    ]);
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, data, "data fetched successfully"));
+  } catch (error) {
+    next(error);
+  }
+};
+export { initDb, getTransactions, getStats, getBarChartData, getPieChartData };

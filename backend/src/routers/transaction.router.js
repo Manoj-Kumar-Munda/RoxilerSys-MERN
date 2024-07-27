@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
     getBarChartData,
+  getPieChartData,
   getStats,
   getTransactions,
   initDb,
@@ -11,6 +12,7 @@ const transactionRouter = Router();
 transactionRouter.route("/").post(initDb).get(getTransactions);
 
 transactionRouter.route("/stats").get(getStats);
-transactionRouter.route("/barChart").get(getBarChartData);
+transactionRouter.route("/barchart").get(getBarChartData);
+transactionRouter.route("/piechart").get(getPieChartData);
 
 export default transactionRouter;
