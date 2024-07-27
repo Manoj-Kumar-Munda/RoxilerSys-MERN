@@ -31,11 +31,35 @@ const initDb = async (req, res, next) => {
 };
 
 const getTransactions = async (req, res, next) => {
-  const { searchText = "", page = 1, limit = 10 } = req.query();
+  const { searchText = "" } = req.query;
+  const page = +req.query.page || 1;
+  const limit = +req.query.limit || 10;
+
+  const offset = (page - 1) * limit;
+  let transactions;
   try {
-    const transactions = await Transaction.find();
-    console.log(transactions[0]);
-  } catch (error) {}
+    if (!searchText) {
+      transactions = await Transaction.find().skip(offset).limit(limit);
+
+      if (transactions.length === 0) {
+        throw new ApiError(404, "No data available");
+      } else {
+        return res.status(200).json(new ApiResponse(200, transactions));
+      }
+    }
+
+    transactions = await Transaction.find({ $text: { $search: searchText } })
+      .skip(offset)
+      .limit(limit);
+
+    if (transactions.length === 0) {
+      throw new ApiError(404, "No data available");
+    }
+
+    return res.status(200).json(new ApiResponse(200, transactions));
+  } catch (error) {
+    next(error);
+  }
 };
 
 export { initDb, getTransactions };

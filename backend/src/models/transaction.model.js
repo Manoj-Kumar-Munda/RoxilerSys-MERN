@@ -8,17 +8,17 @@ const transactionSchema = mongoose.Schema({
   title: {
     type: String,
     required: true,
-    index: true,
+    // index: true,
   },
   price: {
     type: Number,
     required: true,
-    index: true,
+    // index: true,
   },
   description: {
     type: String,
     required: true,
-    index: true,
+    // index: true,
   },
   category: {
     type: String,
@@ -37,5 +37,5 @@ const transactionSchema = mongoose.Schema({
     required: true,
   },
 });
-
+transactionSchema.index({ title: "text", description: "text", price: 1 });
 export const Transaction = mongoose.model("Transaction", transactionSchema);
