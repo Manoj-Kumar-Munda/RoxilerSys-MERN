@@ -1,8 +1,9 @@
 import { Router } from "express";
 import {
-    getBarChartData,
+  getAllData,
+  getBarChartData,
   getPieChartData,
-  getStats,
+  getSales,
   getTransactions,
   initDb,
 } from "../controllers/transaction.controller.js";
@@ -11,8 +12,9 @@ const transactionRouter = Router();
 
 transactionRouter.route("/").post(initDb).get(getTransactions);
 
-transactionRouter.route("/stats").get(getStats);
+transactionRouter.route("/sales").get(getSales);
 transactionRouter.route("/barchart").get(getBarChartData);
 transactionRouter.route("/piechart").get(getPieChartData);
+transactionRouter.route("/stats").get(getAllData);
 
 export default transactionRouter;

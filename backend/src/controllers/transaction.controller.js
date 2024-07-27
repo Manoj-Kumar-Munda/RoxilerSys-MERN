@@ -62,9 +62,9 @@ const getTransactions = async (req, res, next) => {
   }
 };
 
-const getStats = async (req, res, next) => {
+const getSales = async (req, res, next) => {
+  const month = parseInt(req.query?.month);
   try {
-    let month = parseInt(req.query?.month);
     if (!month) {
       throw new ApiError(400, "Month is required");
     }
@@ -132,7 +132,7 @@ const getStats = async (req, res, next) => {
 };
 
 const getBarChartData = async (req, res, next) => {
-  let month = parseInt(req.query?.month);
+  const month = parseInt(req.query?.month);
 
   try {
     if (!month) {
@@ -157,7 +157,6 @@ const getBarChartData = async (req, res, next) => {
         },
       },
     ]);
-    console.log("data: ", data);
 
     return res
       .status(200)
@@ -198,4 +197,42 @@ const getPieChartData = async (req, res, next) => {
     next(error);
   }
 };
-export { initDb, getTransactions, getStats, getBarChartData, getPieChartData };
+
+const getAllData = async (req, res, next) => {
+  const month = req.query?.month;
+  try {
+    if (!month) {
+      throw new ApiError(400, "Month is required");
+    }
+    const { data: sales } = await fetch(
+      `http://localhost:8000/api/v1/transactions/sales?month=${month}`
+    ).then((data) => data.json());
+
+    const { data: barchartData } = await fetch(
+      `http://localhost:8000/api/v1/transactions/barchart?month=${month}`
+    ).then((data) => data.json());
+
+    const { data: piechartData } = await fetch(
+      `http://localhost:8000/api/v1/transactions/piechart?month=${month}`
+    ).then((data) => data.json());
+
+    return res.status(200).json(
+      new ApiResponse(200, {
+        sales,
+        barchartData,
+        piechartData,
+      })
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+export {
+  initDb,
+  getTransactions,
+  getSales,
+  getBarChartData,
+  getPieChartData,
+  getAllData,
+};
