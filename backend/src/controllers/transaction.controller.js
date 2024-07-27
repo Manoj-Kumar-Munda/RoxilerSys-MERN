@@ -176,7 +176,7 @@ const getPieChartData = async (req, res, next) => {
       {
         $match: {
           $expr: {
-            $eq: [{ $month: "$dateOfSale" }, 7],
+            $eq: [{ $month: "$dateOfSale" }, month],
           },
         },
       },
