@@ -75,7 +75,7 @@ const getStats = async (req, res, next) => {
             { sold: true },
             {
               $expr: {
-                $eq: [{ $month: "$dateOfSale" }, 7],
+                $eq: [{ $month: "$dateOfSale" }, month],
               },
             },
           ],
@@ -131,4 +131,37 @@ const getStats = async (req, res, next) => {
   }
 };
 
-export { initDb, getTransactions, getStats };
+const getBarChartData = async (req, res, next) => {
+  let month = parseInt(req.query?.month);
+
+  try {
+    if (!month) {
+      throw new ApiError(400, "Month is required");
+    }
+    const data = await Transaction.aggregate([
+      {
+        $match: {
+          $expr: {
+            $eq: [{ $month: "$dateOfSale" }, month],
+          },
+        },
+      },
+      {
+        $bucket: {
+          groupBy: "$price",
+          boundaries: [0, 100, 200, 300, 400, 500, 600, 700, 800, 900],
+          default: "Others",
+          output: {
+            count: { $sum: 1 },
+          },
+        },
+      },
+    ]);
+    console.log("data: ", data);
+
+    return res.status(200).json(new ApiResponse(200, data, "data fetched successfully"));
+  } catch (error) {
+    next(error);
+  }
+};
+export { initDb, getTransactions, getStats, getBarChartData };
