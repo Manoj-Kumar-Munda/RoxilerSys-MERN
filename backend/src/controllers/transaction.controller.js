@@ -32,14 +32,32 @@ const initDb = async (req, res, next) => {
 
 const getTransactions = async (req, res, next) => {
   const { searchText = "" } = req.query;
+  const month = parseInt(req.query.month);
   const page = +req.query.page || 1;
   const limit = +req.query.limit || 10;
 
   const offset = (page - 1) * limit;
   let transactions;
   try {
+    if (!month) {
+      throw new ApiError(400, "Month is required");
+    }
     if (!searchText) {
-      transactions = await Transaction.find().skip(offset).limit(limit);
+      transactions = await Transaction.aggregate([
+        {
+          $match: {
+            $expr: {
+              $eq: [{ $month: "$dateOfSale" }, 1],
+            },
+          },
+        },
+        {
+          $skip: offset,
+        },
+        {
+          $limit: limit,
+        },
+      ]);
 
       if (transactions.length === 0) {
         throw new ApiError(404, "No data available");
