@@ -62,4 +62,73 @@ const getTransactions = async (req, res, next) => {
   }
 };
 
-export { initDb, getTransactions };
+const getStats = async (req, res, next) => {
+  try {
+    let month = parseInt(req.query?.month);
+    if (!month) {
+      throw new ApiError(400, "Month is required");
+    }
+    const totalSale = await Transaction.aggregate([
+      {
+        $match: {
+          $and: [
+            { sold: true },
+            {
+              $expr: {
+                $eq: [{ $month: "$dateOfSale" }, 7],
+              },
+            },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalSale: {
+            $sum: "$price",
+          },
+        },
+      },
+    ]);
+
+    const totalSoldItems = await Transaction.aggregate([
+      {
+        $match: {
+          sold: true,
+          $expr: {
+            $eq: [{ $month: "$dateOfSale" }, month],
+          },
+        },
+      },
+      {
+        $count: "totalSoldItems",
+      },
+    ]);
+
+    const totalUnsoldItems = await Transaction.aggregate([
+      {
+        $match: {
+          sold: false,
+          $expr: {
+            $eq: [{ $month: "$dateOfSale" }, month],
+          },
+        },
+      },
+      {
+        $count: "totalUnsoldItems",
+      },
+    ]);
+
+    return res.status(200).json(
+      new ApiResponse(200, {
+        totalSaleAmt: totalSale[0].totalSale.toFixed(2),
+        totalSoldItems: totalSoldItems[0].totalSoldItems,
+        totalUnsoldItems: totalUnsoldItems[0].totalUnsoldItems,
+      })
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { initDb, getTransactions, getStats };
