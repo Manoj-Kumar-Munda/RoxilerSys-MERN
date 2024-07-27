@@ -167,7 +167,7 @@ const getBarChartData = async (req, res, next) => {
 };
 
 const getPieChartData = async (req, res, next) => {
-  const month = req.query?.month;
+  const month = parseInt(req.query?.month);
   try {
     if (!month) {
       throw new ApiError(400, "Month is required");
@@ -189,6 +189,8 @@ const getPieChartData = async (req, res, next) => {
         },
       },
     ]);
+
+    console.log("data: ", data);
 
     return res
       .status(200)
