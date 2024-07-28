@@ -189,7 +189,7 @@ const getBarChartData = async (req, res, next) => {
           boundaries: [0, 100, 200, 300, 400, 500, 600, 700, 800, 900],
           default: "Others",
           output: {
-            count: { $sum: 1 },
+            itemsCount: { $sum: 1 },
           },
         },
       },
@@ -220,7 +220,7 @@ const getPieChartData = async (req, res, next) => {
       {
         $group: {
           _id: "$category",
-          count: {
+          itemsCount: {
             $sum: 1,
           },
         },
