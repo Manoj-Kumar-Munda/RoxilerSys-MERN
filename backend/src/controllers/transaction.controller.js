@@ -31,7 +31,7 @@ const initDb = async (req, res, next) => {
 };
 
 const getTransactions = async (req, res, next) => {
-  const { searchText = "" } = req.query;
+  const { search = "" } = req.query;
   const month = parseInt(req.query.month);
   const page = +req.query.page || 1;
   const limit = +req.query.limit || 10;
@@ -42,7 +42,7 @@ const getTransactions = async (req, res, next) => {
     if (!month) {
       throw new ApiError(400, "Month is required");
     }
-    if (!searchText) {
+    if (!search) {
       transactions = await Transaction.aggregate([
         {
           $match: {
@@ -66,9 +66,28 @@ const getTransactions = async (req, res, next) => {
       }
     }
 
-    transactions = await Transaction.find({ $text: { $search: searchText } })
-      .skip(offset)
-      .limit(limit);
+    transactions = await Transaction.aggregate([
+      {
+        $match: {
+          $text: {
+            $search: "samsung",
+          },
+        },
+      },
+      {
+        $match: {
+          $expr: {
+            $eq: [{ $month: "$dateOfSale" }, month],
+          },
+        },
+      },
+      {
+        $skip: offset,
+      },
+      {
+        $limit: limit,
+      },
+    ]);
 
     if (transactions.length === 0) {
       throw new ApiError(404, "No data available");
