@@ -14,7 +14,6 @@ const Stats = ({ month }) => {
     fetch();
   }, [month]);
 
-  console.log("monthly: ", monthlyStats);
   return (
     <div>
       <h1 className="text-lg font-medium">

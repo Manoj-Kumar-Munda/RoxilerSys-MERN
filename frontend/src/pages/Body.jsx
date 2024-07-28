@@ -3,8 +3,8 @@ import SearchBar from "../components/SearchBar";
 import Dropdown from "../components/Dropdown";
 import Table from "../components/Table";
 import { getStats } from "../services/getStats";
-import { monthsArr } from "../utils/constants";
 import Stats from "../components/Stats";
+import BarChartStats from "../components/BarChartStats";
 
 const Body = () => {
   const [month, setMonth] = useState(3);
@@ -32,7 +32,7 @@ const Body = () => {
   }, [month, searchText, paginate]);
 
   const handlePrev = () => {
-    if(paginate.page === 1){
+    if (paginate.page === 1) {
       return;
     }
     setPaginate((prev) => {
@@ -52,23 +52,38 @@ const Body = () => {
     return <h1>No data found</h1>;
   }
   return (
-    <div className="px-4 py-2 max-w-screen-xl mx-auto space-y-4">
+    <div className="px-4 py-2 max-w-screen-xl mx-auto md:space-y-8">
       <div className="flex justify-between">
         <SearchBar searchText={searchText} setSearchText={setSearchText} />
         <Dropdown month={month} setMonth={setMonth} />
       </div>
 
-      <h1 className="text-2xl font-semibold">
-        Transaction Dashboard
-      </h1>
-      {isLoading ? <h1 className="min-h-[20vh]">Loading...</h1> : <Table data={data} />}
+      <div>
+        <h1 className="text-2xl font-medium mb-2">
+          Transaction Dashboard
+        </h1>
+        {isLoading ? (
+          <h1 className="min-h-[20vh]">Loading...</h1>
+        ) : (
+          <Table data={data} />
+        )}
+      </div>
 
       <div className="flex justify-between">
         <div className="inline-flex mx-auto gap-2">
-          <button className="border bg-gray-700 text-white px-6 rounded-md" onClick={handlePrev}>Prev</button>
-          <button className="border bg-gray-700 text-white px-6 rounded-md" onClick={handleNext}>Next</button>
+          <button
+            className="border bg-gray-700 text-white px-6 rounded-md"
+            onClick={handlePrev}
+          >
+            Prev
+          </button>
+          <button
+            className="border bg-gray-700 text-white px-6 rounded-md"
+            onClick={handleNext}
+          >
+            Next
+          </button>
         </div>
-
 
         <div className="inline-flex flex-col text-sm">
           <span>Page: {paginate.page}</span>
@@ -77,6 +92,8 @@ const Body = () => {
       </div>
 
       <Stats month={month} />
+
+      <BarChartStats month={month} />
     </div>
   );
 };

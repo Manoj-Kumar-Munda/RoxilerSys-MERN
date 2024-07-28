@@ -7,6 +7,7 @@ const Table = ({ data }) => {
   }
   return (
     <div className="relative overflow-x-auto border border-gray-300 py-1 rounded-md px-2 shadow-lg">
+
       <table className="min-w-full table-auto">
         <thead className="">
           <tr>
