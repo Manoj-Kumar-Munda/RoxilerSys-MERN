@@ -24,7 +24,7 @@ const BarChartStats = ({ month }) => {
   useEffect(() => {
     fetchData();
   }, [month]);
-  console.log(data);
+
 
   return (
     <div className="space-y-4">

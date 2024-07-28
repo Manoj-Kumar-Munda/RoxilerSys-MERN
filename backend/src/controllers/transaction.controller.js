@@ -43,7 +43,6 @@ const getTransactions = async (req, res, next) => {
       throw new ApiError(400, "Month is required");
     }
     if (!search) {
-      console.log("no search query");
       transactions = await Transaction.aggregate([
         {
           $match: {
@@ -227,8 +226,6 @@ const getPieChartData = async (req, res, next) => {
         },
       },
     ]);
-
-    console.log("data: ", data);
 
     return res
       .status(200)
