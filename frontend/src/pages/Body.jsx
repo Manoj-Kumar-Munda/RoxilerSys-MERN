@@ -3,6 +3,8 @@ import SearchBar from "../components/SearchBar";
 import Dropdown from "../components/Dropdown";
 import Table from "../components/Table";
 import { getStats } from "../services/getStats";
+import { monthsArr } from "../utils/constants";
+import Stats from "../components/Stats";
 
 const Body = () => {
   const [month, setMonth] = useState(3);
@@ -11,14 +13,13 @@ const Body = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [paginate, setPaginate] = useState({
     page: 1,
-    limit: 10,
+    limit: 2,
   });
 
   useEffect(() => {
     setIsLoading(true);
     const timer = setTimeout(async () => {
       const res = await getStats(month, searchText, paginate);
-      console.log(res);
       if (res?.success) {
         setData(res.data);
         setIsLoading(false);
@@ -26,11 +27,26 @@ const Body = () => {
         setData(null);
         setIsLoading(false);
       }
-    }, 2000);
+    }, 1000);
     return () => clearTimeout(timer);
   }, [month, searchText, paginate]);
 
-  console.log(data);
+  const handlePrev = () => {
+    if(paginate.page === 1){
+      return;
+    }
+    setPaginate((prev) => {
+      return { ...prev, page: prev.page - 1 };
+    });
+  };
+  const handleNext = () => {
+    setPaginate((prev) => {
+      return {
+        ...prev,
+        page: prev.page + 1,
+      };
+    });
+  };
 
   if (!isLoading && !data) {
     return <h1>No data found</h1>;
@@ -41,7 +57,26 @@ const Body = () => {
         <SearchBar searchText={searchText} setSearchText={setSearchText} />
         <Dropdown month={month} setMonth={setMonth} />
       </div>
-      {isLoading ? <h1>Loading...</h1> : <Table data={data} />}
+
+      <h1 className="text-2xl font-semibold">
+        Transaction Dashboard
+      </h1>
+      {isLoading ? <h1 className="min-h-[20vh]">Loading...</h1> : <Table data={data} />}
+
+      <div className="flex justify-between">
+        <div className="inline-flex mx-auto gap-2">
+          <button className="border bg-gray-700 text-white px-6 rounded-md" onClick={handlePrev}>Prev</button>
+          <button className="border bg-gray-700 text-white px-6 rounded-md" onClick={handleNext}>Next</button>
+        </div>
+
+
+        <div className="inline-flex flex-col text-sm">
+          <span>Page: {paginate.page}</span>
+          <span>Results per page: {paginate.limit}</span>
+        </div>
+      </div>
+
+      <Stats month={month} />
     </div>
   );
 };
