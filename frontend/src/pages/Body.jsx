@@ -13,7 +13,7 @@ const Body = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [paginate, setPaginate] = useState({
     page: 1,
-    limit: 2,
+    limit: 10,
   });
 
   useEffect(() => {
@@ -48,9 +48,7 @@ const Body = () => {
     });
   };
 
-  if (!isLoading && !data) {
-    return <h1>No data found</h1>;
-  }
+
   return (
     <div className="px-4 py-2 max-w-screen-xl mx-auto md:space-y-8">
       <div className="flex justify-between">
@@ -62,6 +60,11 @@ const Body = () => {
         <h1 className="text-2xl font-medium mb-2">
           Transaction Dashboard
         </h1>
+        {
+          !isLoading && !data && (
+            <h1>No data found</h1>
+          )
+        }
         {isLoading ? (
           <h1 className="min-h-[20vh]">Loading...</h1>
         ) : (
