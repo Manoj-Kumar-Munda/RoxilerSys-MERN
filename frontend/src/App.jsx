@@ -1,9 +1,10 @@
+import Body from "./pages/Body";
+
 function App() {
+
   return (
-    <div>
-      <h1 className="text-red-500">Hello</h1>
-    </div>
-  )
+   <Body />
+  );
 }
 
-export default App
+export default App;
